@@ -46,7 +46,7 @@ class Town(Base):
     county = relation("County", backref="town")
     county_id = Column(Integer, ForeignKey('county.id'))
     UniqueConstraint(grid_reference, name='uix_1')
-
+# database connection
 def dbconnect():
     engine = create_engine("sqlite:///my.db")
     Base.metadata.create_all(engine)
