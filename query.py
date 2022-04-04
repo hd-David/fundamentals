@@ -16,7 +16,6 @@ def query_data(county):
         .join(Town.county)
         .where(County.name == "Essex")
         ).all()
-    #counties = session.query(County).filter(County.name == county).all()
     for county in counties:
         _county = county.__dict__
         del _county['_sa_instance_state']
