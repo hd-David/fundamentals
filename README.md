@@ -1,1 +1,1 @@
-#global statistics
+global statistics
