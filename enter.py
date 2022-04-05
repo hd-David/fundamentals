@@ -1,4 +1,4 @@
-from app import Nation, County, dbconnect
+from model import Nation, County, dbconnect
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, DecimalField, SubmitField, FloatField
 from wtforms.validators import DataRequired, Length

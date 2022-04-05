@@ -1,4 +1,4 @@
-from app import Nation, County, dbconnect, Town
+from model import Nation, County, dbconnect, Town
 import csv
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
@@ -9,7 +9,7 @@ def addGetNation(session, nation_name_input):
         nation = session.query(Nation).filter(Nation.name == nation_name_input).one()
     except NoResultFound:
         nation = Nation()
-        nation.name = town_dict["nation"]
+        nation.name = nation_name_input
     return nation
 
 def addGetCounty(session, county_name_input, nation_name_input):
@@ -18,16 +18,15 @@ def addGetCounty(session, county_name_input, nation_name_input):
         county = session.query(County).filter(County.name == county_name_input).one()
     except NoResultFound:
         county = County()
-        county.nation = addGetNation(session, town_dict["nation"])
-        county.name = town_dict["county"]
+        county.nation = addGetNation(session, nation_name_input)
+        county.name = county_name_input
     return county
-
 
 def addTown(session, town_dict):
     # Try and get the Country from the database. If error (Except) add to the database.
     town = Town()
     # Add attributes
-    town.county = addGetCounty(session, town_dict["nation"], town_dict["county"])
+    town.county = addGetCounty(session,  town_dict["county"], town_dict["nation"])
     town.name = town_dict["name"]
     town.grid_reference = town_dict["grid_reference"]
     town.easting = town_dict["easting"]

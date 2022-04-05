@@ -2,11 +2,7 @@ from sqlalchemy import Table, Column,Integer, String, ForeignKey,Numeric, MetaDa
 from sqlalchemy import create_engine, insert, update, delete, select, UniqueConstraint,DateTime, join
 from sqlalchemy.orm import sessionmaker,relation
 from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
-from flask import Flask, render_template,redirect, request
-from sqlalchemy.exc import IntegrityError
 
-app = Flask(__name__)
 
 Base  = declarative_base()
 
@@ -17,6 +13,7 @@ class Nation(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(64))
 
+
 class County(Base):
     __tablename__ = 'county'
     id = Column(Integer, primary_key=True)
@@ -24,7 +21,6 @@ class County(Base):
     # We define the relationship between Country and County here.
     nation = relation("Nation", backref="county")
     nation_id = Column(Integer, ForeignKey('nation.id'))
-
 
 
 # County is a child of Country
@@ -46,12 +42,11 @@ class Town(Base):
     county = relation("County", backref="town")
     county_id = Column(Integer, ForeignKey('county.id'))
     UniqueConstraint(grid_reference, name='uix_1')
+
+    
 # database connection
 def dbconnect():
     engine = create_engine("sqlite:///my.db")
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     return Session()
-
-if __name__ == '__main__':
-    app.run(debug=True)
