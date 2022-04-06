@@ -28,20 +28,5 @@ def query_data(county):
     return jsonify(output_counties)
 
 
-@app.route('/get-nation/<nation>')
-def get_nation(nation):
-    nations_output = []
-    nations = (session.query(Nation).join(Nation.county).where(Nation.name == nation)).all()
-    for nation in nations:
-        _nation = nation.__dict__
-        del _nation['_sa_instance_state']
-        nations_output.append(_nation)
-        print(_nation)
-    return jsonify(nations_output)
-
-
-@app.route('/update-nation/<nation>/<Newnation>')
-def update_nation(nation, Newnation):
-    
 if __name__ == '__main__':
     app.run(debug=True)
