@@ -1,6 +1,7 @@
 from model import Nation, County, dbconnect, Town
-from sqlalchemy import delete, update
+from sqlalchemy import delete
 from flask import Flask, jsonify
+from sqlalchemy.orm.exc import NoResultFound
 
 session = dbconnect()
 
@@ -13,9 +14,9 @@ session = dbconnect()
         strings in json format
 """
 def delete_town(session, town_dict):
-    town = session.query(Town).where(Town.id == 1 ).one()
-    session.delete(town)
-    session.commit()
-    town_county = town.__dict__
-    del town_county["_sa_instance_state"]
-    return jsonify(town_county)
+    try:
+        town = session.query(Town).where(Town.id == town_dict['id']).one()
+        session.delete(town)
+        session.commit()
+    except NoResultFound:
+        return jsonify({"Not found" : "Invalid requuest"})

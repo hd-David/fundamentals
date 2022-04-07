@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 session = dbconnect()
 # defining endpoints
-@app.route('/town', methods = ['POST', 'GET', 'PATCH', 'DELETE']) 
+@app.route('/town', methods = ['POST', 'GET', 'PATCH', 'PUT','DELETE']) 
 # defining the function without pasing arguments
 def town():
     if request.method == 'POST':
@@ -22,7 +22,7 @@ def town():
     if request.method == 'DELETE':
         return delete_town(session, request.json)
     
-    if request.method == 'PATCH':
+    if request.method == 'PUT':
         return update_town(session, request.json)
         
 

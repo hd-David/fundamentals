@@ -2,7 +2,6 @@ from sqlalchemy import Table, Column,Integer, String, ForeignKey,Numeric, MetaDa
 from sqlalchemy import create_engine, insert, update, delete, select, UniqueConstraint,DateTime, join
 from sqlalchemy.orm import sessionmaker,relation
 from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 
 Base  = declarative_base()
@@ -42,11 +41,6 @@ class Town(Base):
     county = relation("County", backref="town")
     county_id = Column(Integer, ForeignKey('county.id'))
     UniqueConstraint(grid_reference, name='uix_1')
-
-class TownSchema(SQLAlchemyAutoSchema):
-    class meta:
-        fields = ('id', 'name', 'grid_reference', 'easting', 'northing', 'latitude',
-         'longitude', 'elevation', 'postcode_sector', 'local_government_area', 'nuts_region', 'town_type')
 
     
 # database connection
