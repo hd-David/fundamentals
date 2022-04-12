@@ -5,6 +5,7 @@ from read import getTown
 from delete import delete_town
 from update import update_town
 from jsonschema import validate
+from jsonschema import ValidationError
 
 app = Flask(__name__)
 
@@ -33,12 +34,15 @@ session = dbconnect()
 # defining endpoints
 @app.route('/town', methods = ['POST', 'GET', 'PATCH', 'PUT','DELETE']) 
 def town():
-
-    validate( instance=request.json, schema=schema, )
+    try:
+        validate( instance=request.json, schema=schema, )
+    except ValidationError as error:
+        print(error)
+        return "Bad request", 400
 
     if request.method == 'POST':
         addTown(session, request.json) 
-        return 'ok'
+        return 'Ok'
         
     if request.method == 'GET':
         return getTown(session, request.json)
