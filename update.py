@@ -1,4 +1,5 @@
 from model import Nation, County, dbconnect, Town
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import update
 
 """ 
@@ -10,9 +11,12 @@ from sqlalchemy import update
         updated town as a dictionary
 """
 def update_town(session, town_dict):
-    town = session.query(Town).where(Town.id == town_dict["id"] )
-    #setting new values
-    town.update(town_dict)     
-    session.commit() 
-    return 'ok'
-   
+    try:
+        town = session.query(Town).where(Town.id == town_dict["id"] )
+        #setting new values
+        town.update(town_dict)     
+        session.commit() 
+    except NoResultFound:
+        return "not results found", 404
+    return "ok"
+    

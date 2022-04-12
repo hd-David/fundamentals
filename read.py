@@ -1,6 +1,6 @@
 from model import Nation, County, dbconnect, Town
 import copy
-
+from sqlalchemy.orm.exc import MultipleResultsFound,NoResultFound
 """ 
     First we run querry to get the town and add the county and nation name 
     inputs:
@@ -10,15 +10,20 @@ import copy
         strings in json format
 """
 def getTown(session, town_dict):
-    town = (
-        session.query(Town)
-        .join(Town.county)
-        .join(County.nation)
-        .where(County.name == town_dict["county"])
-        .where(Town.name == town_dict["name"])
-        ).one()
-    town_county = copy.copy(town).__dict__
-    del town_county["_sa_instance_state"]
-    town_county["county"] = town.county.name
-    town_county["nation"] = town.county.nation.name
-    return town_county
+    try:
+        town = (
+            session.query(Town)
+            .join(Town.county)
+            .join(County.nation)
+            .where(County.name == town_dict["county"])
+            .where(Town.name == town_dict["name"])
+            ).one()
+        town_county = copy.copy(town).__dict__
+        del town_county["_sa_instance_state"]
+        town_county["county"] = town.county.name
+        town_county["nation"] = town.county.nation.name
+        return town_county
+    except MultipleResultsFound:
+        return "bad Gateway!", 502
+    except NoResultFound:
+        return "bad request, not found!", 404

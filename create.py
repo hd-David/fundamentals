@@ -1,30 +1,52 @@
+from sqlalchemy.exc import IntegrityError
 from model import Nation, County, dbconnect, Town
-from flask import Flask, request
-from enter import addTown
-from read import getTown
-from delete import delete_town
-from update import update_town
-
-app = Flask(__name__)
+from sqlalchemy.orm.exc import NoResultFound
 
 session = dbconnect()
-# defining endpoints
-@app.route('/town', methods = ['POST', 'GET', 'PATCH', 'PUT','DELETE']) 
-# defining the function without pasing arguments
-def town():
-    if request.method == 'POST':
-        addTown(session, request.json) 
-        return 'ok'
 
-    if request.method == 'GET':
-        return getTown(session, request.json)
 
-    if request.method == 'DELETE':
-        return delete_town(session, request.json)
-    
-    if request.method == 'PUT':
-        return update_town(session, request.json)
-        
+def addGetNation(session, nation_name_input):
+    # Try and get the Nation from the database. If error (Except) add to the database.
+    try:
+        nation = session.query(Nation).filter(Nation.name == nation_name_input).one()
+    except NoResultFound:
+        nation = Nation()
+        nation.name = nation_name_input
+    return nation
 
-if __name__ == '__main__':
-    app.run(debug=True)
+def addGetCounty(session, county_name_input, nation_name_input):
+    # Try and get the County from the database. If error (Except) add to the database.
+    try:
+        county = session.query(County).filter(County.name == county_name_input).one()
+    except NoResultFound:
+        county = County()
+        county.nation = addGetNation(session, nation_name_input)
+        county.name = county_name_input
+    return county
+
+
+def addTown(session, town_dict):
+    # Try and get the Country from the database. If error (Except) add to the database.
+    town = Town()
+    # Add attributes
+    town.county = addGetCounty(session,  town_dict["county"], town_dict["nation"])
+    town.name = town_dict["name"]
+    town.grid_reference = town_dict["grid_reference"]
+    town.easting = town_dict["easting"]
+    town.northing = town_dict["northing"]
+    town.latitude = town_dict["latitude"]
+    town.longitude = town_dict["longitude"]
+    town.elevation = town_dict["elevation"]
+    town.postcode_sector = town_dict["postcode_sector"]
+    town.local_government_area = town_dict["local_government_area"]
+    town.nuts_region = town_dict["nuts_region"]
+    town.town_type = town_dict["town_type"]
+    # add the country (parent) to the county (child)
+    try: 
+        session.add(town)
+        session.commit()
+    except IntegrityError as error:
+        session.rollback()
+
+    except keyError as e:
+        return "key doesn't exist", 404

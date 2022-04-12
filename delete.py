@@ -19,4 +19,6 @@ def delete_town(session, town_dict):
         session.delete(town)
         session.commit()
     except NoResultFound:
-        return jsonify({"Not found" : "Invalid requuest"})
+        return "No results found", 404
+ 
+    return "ok"
