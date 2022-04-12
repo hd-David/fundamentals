@@ -4,18 +4,37 @@ from create import addTown
 from read import getTown
 from delete import delete_town
 from update import update_town
+from jsonschema import validate
 
 app = Flask(__name__)
 
+schema = {
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "grid_reference": { "type": "string" },
+    "latitude":{"type": "number"},
+    "longitude":{"type":"number"},
+    "elevation":{"type": "integer"},
+    "postcode_sector": {"type" : "string"}
+  }
+  
+}
+
+
+
 session = dbconnect()
+
 # defining endpoints
 @app.route('/town', methods = ['POST', 'GET', 'PATCH', 'PUT','DELETE']) 
-# defining the function without pasing arguments
 def town():
+
+    validate( instance=request.json, schema=schema, )
+    
     if request.method == 'POST':
         addTown(session, request.json) 
         return 'ok'
-
+        
     if request.method == 'GET':
         return getTown(session, request.json)
 

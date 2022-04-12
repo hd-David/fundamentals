@@ -26,4 +26,4 @@ def getTown(session, town_dict):
     except MultipleResultsFound:
         return "bad Gateway!", 502
     except NoResultFound:
-        return "bad request, not found!", 404
+        return "Results not found!", 404

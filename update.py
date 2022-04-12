@@ -13,6 +13,7 @@ from sqlalchemy import update
 def update_town(session, town_dict):
     try:
         town = session.query(Town).where(Town.id == town_dict["id"] )
+        print(town)
         #setting new values
         town.update(town_dict)     
         session.commit() 
