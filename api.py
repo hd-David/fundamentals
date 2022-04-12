@@ -13,10 +13,15 @@ schema = {
   "properties": {
     "name": { "type": "string" },
     "grid_reference": { "type": "string" },
-    "latitude":{"type": "number"},
-    "longitude":{"type":"number"},
-    "elevation":{"type": "integer"},
-    "postcode_sector": {"type" : "string"}
+    "latitude": {"type": "number"},
+    "longitude": {"type" :"number"},
+    "elevation": {"type": "integer"},
+    "postcode_sector": {"type" : "string"},
+    "nuts_region": {"type": "string"},
+    "northing": {"type": "integer"},
+    "easting" : {"type": "integer"},
+    "town_type": {"type": "string"},
+    "local_government_area": {"type ": "string"}
   }
   
 }
@@ -30,7 +35,7 @@ session = dbconnect()
 def town():
 
     validate( instance=request.json, schema=schema, )
-    
+
     if request.method == 'POST':
         addTown(session, request.json) 
         return 'ok'
