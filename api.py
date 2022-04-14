@@ -1,11 +1,12 @@
 from model import Nation, County, dbconnect, Town
-from flask import Flask, request
+from flask import Flask, request,jsonify
 from create import addTown
 from read import getTown
 from delete import delete_town
 from update import update_town
 from jsonschema import validate
 from jsonschema import ValidationError
+import json
 
 app = Flask(__name__)
 
@@ -38,9 +39,16 @@ def town():
         validate( instance=request.json, schema=schema, )
     except ValidationError as error:
         print(error)
-        return "Bad request", 400
+        error_message = {
+                        "message": error.message,
+                        "path" : list(error.path),
+                        "validator" : error.validator,
+                        "validator_value": error.validator_value,
 
-    if request.method == 'POST':
+        }
+        
+        return jsonify(error_message)
+    if request.method == 'POST': 
         addTown(session, request.json) 
         return 'Ok'
         
@@ -50,9 +58,10 @@ def town():
     if request.method == 'DELETE':
         return delete_town(session, request.json)
     
-    if request.method == 'PUT':
+    if request.method == 'PATCH':
         return update_town(session, request.json)
         
 
 if __name__ == '__main__':
     app.run(debug=True)
+        
