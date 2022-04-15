@@ -14,11 +14,9 @@ session = dbconnect()
         strings in json format
 """
 def delete_town(session, town_dict):
-    try:
-        town = session.query(Town).where(Town.id == town_dict['id']).one()
-        session.delete(town)
-        session.commit()
-    except NoResultFound:
-        return "No results found", 404
- 
-    return "ok"
+    town = session.query(Town).where(Town.id == town_dict['id']).first()
+    if not town:
+        return jsonify({'message':'No results found'}), 400
+    session.delete(town)
+    session.commit()
+    return jsonify({'message': 'town deleted succesfully'})

@@ -28,8 +28,6 @@ schema = {
   
 }
 
-
-
 session = dbconnect()
 
 # defining endpoints
@@ -44,10 +42,10 @@ def town():
                         "path" : list(error.path),
                         "validator" : error.validator,
                         "validator_value": error.validator_value,
-
-        }
+                        }
         
         return jsonify(error_message)
+
     if request.method == 'POST': 
         addTown(session, request.json) 
         return 'Ok'

@@ -2,6 +2,7 @@ from model import Nation, County, dbconnect, Town
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import update
 import json, copy
+from flask import jsonify
 
 """ 
     First we run querry to get the town we want to update using the town id  do commit.
@@ -20,7 +21,6 @@ def update_town(session, town_dict):
         query_check.update(town_dict)  
         session.commit() 
     except NoResultFound:
-        return "not results found", 404
-    return "ok"
-
+        return jsonify({'message':"not results found"}), 404
+    return jsonify({'message' : 'town update succesfully!'})
     
