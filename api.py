@@ -1,5 +1,5 @@
 from model import Nation, County, dbconnect, Town
-from flask import Flask, request,jsonify
+from flask import Flask, request, jsonify
 from create import addTown
 from read import getTown
 from delete import delete_town
@@ -33,8 +33,15 @@ session = dbconnect()
 # defining endpoints
 @app.route('/town', methods = ['POST', 'GET', 'PATCH', 'PUT','DELETE']) 
 def town():
+    if request.method == 'GET':
+        town_dict = {
+            "county": request.args.get('county'),
+            "name": request.args.get('name')
+        }
+        return getTown(session, town_dict)
+        
     try:
-        validate( instance=request.json, schema=schema, )
+        validate(instance=request.json, schema=schema)
     except ValidationError as error:
         print(error)
         error_message = {
@@ -50,9 +57,6 @@ def town():
         addTown(session, request.json) 
         return 'Ok'
         
-    if request.method == 'GET':
-        return getTown(session, request.json)
-
     if request.method == 'DELETE':
         return delete_town(session, request.json)
     
@@ -62,4 +66,3 @@ def town():
 
 if __name__ == '__main__':
     app.run(debug=True)
-        
